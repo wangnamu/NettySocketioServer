@@ -1,7 +1,5 @@
 package com.ufo.NettySocketioServer.Models;
 
-import java.util.HashMap;
-
 /*
  * 用户信息
  */
@@ -14,16 +12,12 @@ public class UserInfo {
 	private String NickName;
 	// 最近一次登录时间
 	private long LoginTime;
-	// 设备类型
-	private String DeviceType;
 	// 设备证书
 	private String DeviceToken;
-	// 是否在线
-	private boolean IsOnline = false;
 	// 所属项目
 	private String Project;
-	// SessionID
-	private String SessionID;
+	// 设备类型
+	private String DeviceType;
 
 	public String getSID() {
 		return SID;
@@ -57,28 +51,12 @@ public class UserInfo {
 		LoginTime = loginTime;
 	}
 
-	public String getDeviceType() {
-		return DeviceType;
-	}
-
-	public void setDeviceType(String deviceType) {
-		DeviceType = deviceType;
-	}
-
 	public String getDeviceToken() {
 		return DeviceToken;
 	}
 
 	public void setDeviceToken(String deviceToken) {
 		DeviceToken = deviceToken;
-	}
-
-	public boolean isIsOnline() {
-		return IsOnline;
-	}
-
-	public void setIsOnline(boolean isOnline) {
-		IsOnline = isOnline;
 	}
 
 	public String getProject() {
@@ -89,39 +67,12 @@ public class UserInfo {
 		Project = project;
 	}
 
-	public String getSessionID() {
-		return SessionID;
+	public String getDeviceType() {
+		return DeviceType;
 	}
 
-	public void setSessionID(String sessionID) {
-		SessionID = sessionID;
+	public void setDeviceType(String deviceType) {
+		DeviceType = deviceType;
 	}
 
-	public HashMap<String, String> toHashMap() {
-		HashMap<String, String> hashMap = new HashMap<>();
-		hashMap.put("SID", SID);
-		hashMap.put("UserName", UserName);
-		hashMap.put("NickName", NickName);
-		hashMap.put("LoginTime", String.valueOf(LoginTime));
-		hashMap.put("DeviceType", DeviceType);
-		hashMap.put("DeviceToken", DeviceToken);
-		hashMap.put("IsOnline", String.valueOf(IsOnline));
-		hashMap.put("Project", Project);
-		hashMap.put("SessionID", SessionID);
-		return hashMap;
-	}
-
-	public UserInfo fromHashMap(HashMap<String, String> hashMap) {
-		UserInfo userInfo = new UserInfo();
-		userInfo.setSID(hashMap.get("SID"));
-		userInfo.setUserName(hashMap.get("UserName"));
-		userInfo.setNickName(hashMap.get("NickName"));
-		userInfo.setLoginTime(Long.valueOf(hashMap.get("LoginTime")));
-		userInfo.setDeviceType(hashMap.get("DeviceType"));
-		userInfo.setDeviceToken(hashMap.get("DeviceToken"));
-		userInfo.setIsOnline(Boolean.valueOf(hashMap.get("IsOnline")));
-		userInfo.setProject(hashMap.get("Project"));
-		userInfo.setSessionID(hashMap.get("SessionID"));
-		return userInfo;
-	}
 }
