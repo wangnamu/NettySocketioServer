@@ -19,17 +19,23 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.google.gson.Gson;
+import com.notnoop.apns.APNS;
+import com.notnoop.apns.ApnsService;
+import com.notnoop.apns.ApnsServiceBuilder;
+import com.notnoop.apns.PayloadBuilder;
 import com.ufo.NettySocketioServer.Models.DeviceTypeEnum;
 import com.ufo.NettySocketioServer.Models.Message;
+import com.ufo.NettySocketioServer.Models.MessageTypeEnum;
 import com.ufo.NettySocketioServer.Models.Notify;
 import com.ufo.NettySocketioServer.Models.UserInfo;
 import com.ufo.NettySocketioServer.Models.UserInfoBean;
 
 public class MySocketIOServer extends SocketIOServer {
 
-	private final static int MAXTHREADCOUNT = 50;
+	private final static int MAXTHREADCOUNT = 100;
 
 	private RedissonClient mRedisson;
+	private ApnsService mApnsService;
 
 	public MySocketIOServer(Configuration configuration) {
 		super(configuration);
@@ -40,7 +46,15 @@ public class MySocketIOServer extends SocketIOServer {
 		mRedisson = redisson;
 	}
 
-	public void setUp() {
+	public void setUp(String path, String password, Boolean isproduction) {
+
+		ApnsServiceBuilder builder = APNS.newService().withCert(path, password);
+		if (isproduction) {
+			mApnsService = builder.withProductionDestination().build();
+		} else {
+			mApnsService = builder.withSandboxDestination().build();
+		}
+
 		setUpLisenter();
 		setUpTopic();
 	}
@@ -378,7 +392,7 @@ public class MySocketIOServer extends SocketIOServer {
 			if (client == null)
 				return;
 
-			System.out.println(String.format("UserID %s send %s to %s", msg.getSenderID(), msg.getAlert(), receiverID));
+			System.out.println(String.format("UserID %s send %s to %s", msg.getSenderID(), msg.getBody(), receiverID));
 
 			HashSet<String> hashSet = new HashSet<>();
 			hashSet.add(receiverID);
@@ -402,7 +416,7 @@ public class MySocketIOServer extends SocketIOServer {
 			if (sessionID == null)
 				return;
 
-			System.out.println(String.format("UserID %s send %s to %s", msg.getSenderID(), msg.getAlert(), receiverID));
+			System.out.println(String.format("UserID %s send %s to %s", msg.getSenderID(), msg.getBody(), receiverID));
 
 			HashSet<String> hashSet = new HashSet<>();
 			hashSet.add(receiverID);
@@ -416,6 +430,7 @@ public class MySocketIOServer extends SocketIOServer {
 			if (client == null) {
 				// 在后台
 				System.out.println("in background");
+				sendToAPN(msg, userMap.get("DeviceToken"));
 			} else {
 				// 在前台
 				System.out.println("in foreground");
@@ -438,7 +453,7 @@ public class MySocketIOServer extends SocketIOServer {
 			if (client == null)
 				return;
 
-			System.out.println(String.format("UserID %s send %s to %s", msg.getSenderID(), msg.getAlert(), receiverID));
+			System.out.println(String.format("UserID %s send %s to %s", msg.getSenderID(), msg.getBody(), receiverID));
 
 			HashSet<String> hashSet = new HashSet<>();
 			hashSet.add(receiverID);
@@ -455,6 +470,50 @@ public class MySocketIOServer extends SocketIOServer {
 			}, data);
 
 		}
+	}
+
+	/**
+	 * APNS推送
+	 * 
+	 * @param msg
+	 * @param deviceToken
+	 */
+	private void sendToAPN(Message msg, String deviceToken) {
+		if (!msg.getIsAlert())
+			return;
+		PayloadBuilder builder = APNS.newPayload().badge(1).alertTitle(msg.getTitle())
+				.customField("others", msg.getOthers()).category(msg.getCategory()).mutableContent();
+
+		switch (msg.getMessageType()) {
+		case MessageTypeEnum.TEXT:
+			builder.alertBody(msg.getBody());
+			break;
+		case MessageTypeEnum.IMAGE:
+			builder.alertBody("[图片]");
+			break;
+		case MessageTypeEnum.FILE:
+			builder.alertBody("[文件]");
+			break;
+		case MessageTypeEnum.URL:
+			builder.alertBody("[链接]");
+			break;
+		case MessageTypeEnum.SOUND:
+			builder.alertBody("[音频]");
+			break;
+		case MessageTypeEnum.MOVIE:
+			builder.alertBody("[视频]");
+			break;
+		case MessageTypeEnum.EMOJI:
+			builder.alertBody("[表情]");
+			break;
+
+		default:
+			break;
+		}
+
+		String payload = builder.build();
+		mApnsService.push(deviceToken, payload);
+
 	}
 
 	/**

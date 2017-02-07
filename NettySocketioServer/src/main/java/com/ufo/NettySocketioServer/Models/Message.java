@@ -14,13 +14,17 @@ public class Message {
 	// 接收人ID
 	private HashSet<String> ReceiverIDs;
 	// 标题
-	private String Alert;
+	private String Title;
+	//内容
+	private String Body;
 	// 时间
 	private long Time;
 	// 消息类型(文字、图片、文件、链接、音频、视频、表情等)
 	private String MessageType;
 	// 提醒
 	private Boolean IsAlert;
+	// 针对ios10和androidN的快捷回复功能，Category字段表示快捷方式分类
+	private String Category;
 	// 自定义
 	private Object Others;
 	
@@ -42,11 +46,17 @@ public class Message {
 	public void setReceiverIDs(HashSet<String> receiverIDs) {
 		ReceiverIDs = receiverIDs;
 	}
-	public String getAlert() {
-		return Alert;
+	public String getTitle() {
+		return Title;
 	}
-	public void setAlert(String alert) {
-		Alert = alert;
+	public void setTitle(String title) {
+		Title = title;
+	}
+	public String getBody() {
+		return Body;
+	}
+	public void setBody(String body) {
+		Body = body;
 	}
 	public long getTime() {
 		return Time;
@@ -65,6 +75,12 @@ public class Message {
 	}
 	public void setIsAlert(Boolean isAlert) {
 		IsAlert = isAlert;
+	}
+	public String getCategory() {
+		return Category;
+	}
+	public void setCategory(String category) {
+		Category = category;
 	}
 	public Object getOthers() {
 		return Others;
