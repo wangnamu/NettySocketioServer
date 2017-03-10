@@ -32,6 +32,7 @@ import com.ufo.NettySocketioServer.Models.UserInfoBean;
 
 public class MySocketIOServer extends SocketIOServer {
 
+	//发送消息最大并发线程数
 	private final static int MAXTHREADCOUNT = 100;
 
 	private RedissonClient mRedisson;
@@ -482,7 +483,9 @@ public class MySocketIOServer extends SocketIOServer {
 		if (!msg.getIsAlert())
 			return;
 		PayloadBuilder builder = APNS.newPayload().badge(1).alertTitle(msg.getTitle())
-				.customField("others", msg.getOthers()).category(msg.getCategory()).mutableContent();
+				.customField("othersType", msg.getOthersType())
+				.customField("others", msg.getOthers())
+				.category(msg.getCategory()).mutableContent();
 
 		switch (msg.getMessageType()) {
 		case MessageTypeEnum.TEXT:

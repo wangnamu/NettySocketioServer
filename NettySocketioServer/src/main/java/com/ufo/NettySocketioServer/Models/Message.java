@@ -25,7 +25,9 @@ public class Message {
 	private Boolean IsAlert;
 	// 针对ios10和androidN的快捷回复功能，Category字段表示快捷方式分类
 	private String Category;
-	// 自定义
+	// 自定义内容类型
+	private String OthersType;
+	// 自定义内容
 	private Object Others;
 	
 	public String getSID() {
@@ -81,6 +83,12 @@ public class Message {
 	}
 	public void setCategory(String category) {
 		Category = category;
+	}
+	public String getOthersType() {
+		return OthersType;
+	}
+	public void setOthersType(String othersType) {
+		OthersType = othersType;
 	}
 	public Object getOthers() {
 		return Others;
