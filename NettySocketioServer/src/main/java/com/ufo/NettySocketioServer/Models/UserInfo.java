@@ -4,6 +4,7 @@ package com.ufo.NettySocketioServer.Models;
  * 用户信息
  */
 public class UserInfo {
+	
 	// 主键
 	private String SID;
 	// 用户名
@@ -14,10 +15,11 @@ public class UserInfo {
 	private long LoginTime;
 	// 设备证书
 	private String DeviceToken;
-	// 所属项目
-	private String Project;
 	// 设备类型
 	private String DeviceType;
+	// 检查登录状态
+	private Boolean CheckStatus = false;
+
 
 	public String getSID() {
 		return SID;
@@ -59,14 +61,6 @@ public class UserInfo {
 		DeviceToken = deviceToken;
 	}
 
-	public String getProject() {
-		return Project;
-	}
-
-	public void setProject(String project) {
-		Project = project;
-	}
-
 	public String getDeviceType() {
 		return DeviceType;
 	}
@@ -75,4 +69,11 @@ public class UserInfo {
 		DeviceType = deviceType;
 	}
 
+	public Boolean getCheckStatus() {
+		return CheckStatus;
+	}
+
+	public void setCheckStatus(Boolean checkStatus) {
+		CheckStatus = checkStatus;
+	}
 }

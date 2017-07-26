@@ -8,8 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.redisson.Redisson;
@@ -20,14 +18,12 @@ import com.corundumstudio.socketio.*;
 
 public class App {
 
-	// arg[0]端口,arg[1]配置文件路径
-	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException {
+	// arg[0]ip地址,arg[1]端口,arg[2]配置文件路径
+	public static void main(String[] args) throws InterruptedException, IOException {
 
-		InetAddress addr = InetAddress.getLocalHost();
-		String ip = addr.getHostAddress();
-
-		int port = Integer.valueOf(args[0]);
-		String propPath = args[1];
+		String ip = args[0];
+		int port = Integer.valueOf(args[1]);
+		String propPath = args[2];
 
 		Properties properties = new Properties();
 		InputStream in = new FileInputStream(propPath);

@@ -1,34 +1,46 @@
 package com.ufo.NettySocketioServer.Models;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class UserInfoBean {
 
-	// 主键
-	private String SID;
+	// 设备Token(主键)
+	private String DeviceToken;
+	// 用户ID
+	private String UserID;
 	// 用户名
 	private String UserName;
 	// 真实姓名
 	private String NickName;
 	// 最近一次登录时间
-	private long LoginTime;
-	// 设备证书
-	private String DeviceToken;
-	// 所属项目
-	private String Project;
-	// SessionIDIOS
-	private String SessionIDIOS;
-	// SessionIDANDROID
-	private String SessionIDANDROID;
-	// SessionIDPC
-	private String SessionIDPC;
+	private long LoginTime = 0;
+	// 设备类型
+	private String DeviceType;
+	// SessionID
+	private String SessionID;
+	// 未读信息数量
+	private int UnReadCount = 0;
+	//用户已经登录，但Socket未连接
+	private Boolean IsSocketConnected = false;
+	//服务器Token
+	private String ServerToken;
 
-	public String getSID() {
-		return SID;
+	
+	public String getDeviceToken() {
+		return DeviceToken;
 	}
 
-	public void setSID(String sID) {
-		SID = sID;
+	public void setDeviceToken(String deviceToken) {
+		DeviceToken = deviceToken;
+	}
+	
+	public String getUserID() {
+		return UserID;
+	}
+
+	public void setUserID(String userID) {
+		UserID = userID;
 	}
 
 	public String getUserName() {
@@ -55,110 +67,98 @@ public class UserInfoBean {
 		LoginTime = loginTime;
 	}
 
-	public String getDeviceToken() {
-		return DeviceToken;
+	
+
+	public String getSessionID() {
+		return SessionID;
 	}
 
-	public void setDeviceToken(String deviceToken) {
-		DeviceToken = deviceToken;
+	public void setSessionID(String sessionID) {
+		SessionID = sessionID;
 	}
 
-	public String getProject() {
-		return Project;
+	public int getUnReadCount() {
+		return UnReadCount;
 	}
 
-	public void setProject(String project) {
-		Project = project;
+	public void setUnReadCount(int unReadCount) {
+		UnReadCount = unReadCount;
 	}
 
-	public void setSessionIDIOS(String sessionIDIOS) {
-		SessionIDIOS = sessionIDIOS;
+	public String getDeviceType() {
+		return DeviceType;
 	}
 
-	public String getSessionIDIOS() {
-		return SessionIDIOS;
+	public void setDeviceType(String deviceType) {
+		DeviceType = deviceType;
+	}
+	
+	public Boolean getIsSocketConnected() {
+		return IsSocketConnected;
 	}
 
-	public String getSessionIDANDROID() {
-		return SessionIDANDROID;
+	public void setIsSocketConnected(Boolean isSocketConnected) {
+		IsSocketConnected = isSocketConnected;
 	}
 
-	public void setSessionIDANDROID(String sessionIDANDROID) {
-		SessionIDANDROID = sessionIDANDROID;
+	public String getServerToken() {
+		return ServerToken;
 	}
 
-	public String getSessionIDPC() {
-		return SessionIDPC;
+	public void setServerToken(String serverToken) {
+		ServerToken = serverToken;
 	}
 
-	public void setSessionIDPC(String sessionIDPC) {
-		SessionIDPC = sessionIDPC;
+
+	public Map<String, String> toMap() {
+
+		Map<String, String> map = new HashMap<>();
+		map.put("UserID", UserID);
+		map.put("UserName", UserName);
+		map.put("NickName", NickName);
+		map.put("LoginTime", String.valueOf(LoginTime));
+		map.put("DeviceToken", DeviceToken);
+		map.put("DeviceType", DeviceType);
+		map.put("SessionID", SessionID);
+		map.put("UnReadCount", String.valueOf(UnReadCount));
+		map.put("IsSocketConnected", String.valueOf(IsSocketConnected));
+		map.put("ServerToken", ServerToken);
+		
+		return map;
 	}
 
-	public HashMap<String, String> toHashMap() {
+	public UserInfoBean fromMap(Map<String, String> map) {
 
-		HashMap<String, String> hashMap = new HashMap<>();
-		hashMap.put("SID", SID);
-		hashMap.put("UserName", UserName);
-		hashMap.put("NickName", NickName);
-		hashMap.put("LoginTime", String.valueOf(LoginTime));
-		hashMap.put("DeviceToken", DeviceToken);
-		hashMap.put("Project", Project);
-		hashMap.put("SessionIDIOS", SessionIDIOS);
-		hashMap.put("SessionIDANDROID", SessionIDANDROID);
-		hashMap.put("SessionIDPC", SessionIDPC);
-
-		return hashMap;
+		this.setUserID(map.get("UserID"));
+		this.setUserName(map.get("UserName"));
+		this.setNickName(map.get("NickName"));
+		this.setLoginTime(Long.valueOf(map.get("LoginTime")));
+		this.setSessionID(map.get("SessionID"));
+		this.setDeviceToken(map.get("DeviceToken"));
+		this.setDeviceType(map.get("DeviceType"));
+		this.setUnReadCount(Integer.valueOf(map.get("UnReadCount")));
+		this.setIsSocketConnected(Boolean.valueOf(map.get("IsSocketConnected")));
+		this.setServerToken(map.get("ServerToken"));
+		
+		return this;
 	}
 
-	public UserInfoBean fromHashMap(HashMap<String, String> hashMap) {
+	public static UserInfoBean translateFromUserInfo(UserInfo userInfo, String sessionID,String serverToken) {
 
 		UserInfoBean userInfoBean = new UserInfoBean();
-		userInfoBean.setSID(hashMap.get("SID"));
-		userInfoBean.setUserName(hashMap.get("UserName"));
-		userInfoBean.setNickName(hashMap.get("NickName"));
-		userInfoBean.setLoginTime(Long.valueOf(hashMap.get("LoginTime")));
-		userInfoBean.setDeviceToken(hashMap.get("DeviceToken"));
-		userInfoBean.setProject(hashMap.get("Project"));
-		userInfoBean.setSessionIDIOS(hashMap.get("SessionIDIOS"));
-		userInfoBean.setSessionIDANDROID(hashMap.get("SessionIDANDROID"));
-		userInfoBean.setSessionIDPC(hashMap.get("SessionIDPC"));
-
-		return userInfoBean;
-	}
-
-	public static UserInfoBean translateFromUserInfo(UserInfo userInfo, String currentSessionID, String sessionIDIOS,
-			String sessionIDANDROID, String sessionIDPC) {
-
-		UserInfoBean userInfoBean = new UserInfoBean();
-		userInfoBean.setSID(userInfo.getSID());
+		userInfoBean.setUserID(userInfo.getSID());
 		userInfoBean.setUserName(userInfo.getUserName());
 		userInfoBean.setNickName(userInfo.getNickName());
 		userInfoBean.setLoginTime(userInfo.getLoginTime());
-		userInfoBean.setProject(userInfo.getProject());
+		userInfoBean.setSessionID(sessionID);
 		userInfoBean.setDeviceToken(userInfo.getDeviceToken());
-
-		if (userInfo.getDeviceType().equals(DeviceTypeEnum.ANDROID)) {
-			userInfoBean.setSessionIDANDROID(currentSessionID);
-			if (sessionIDPC != null) {
-				userInfoBean.setSessionIDPC(sessionIDPC);
-			}
-		} else if (userInfo.getDeviceType().equals(DeviceTypeEnum.IOS)) {
-			userInfoBean.setSessionIDIOS(currentSessionID);
-			if (sessionIDPC != null) {
-				userInfoBean.setSessionIDPC(sessionIDPC);
-			}
-		} else {
-			userInfoBean.setSessionIDPC(currentSessionID);
-			if (sessionIDANDROID != null) {
-				userInfoBean.setSessionIDANDROID(sessionIDANDROID);
-			}
-			if (sessionIDIOS != null) {
-				userInfoBean.setSessionIDIOS(sessionIDIOS);
-			}
-		}
-
+		userInfoBean.setDeviceType(userInfo.getDeviceType());
+		userInfoBean.setUnReadCount(0);
+		userInfoBean.setIsSocketConnected(true);
+		userInfoBean.setServerToken(serverToken);
+		
 		return userInfoBean;
+		
 	}
 
 }
