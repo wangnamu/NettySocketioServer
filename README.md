@@ -50,9 +50,23 @@ Web系统与手机APP之间的通讯，每个账户支持一台PC设备和一台
 
 * 运行命令： java -jar socket.jar 'ip' 'port' 'config.properties 绝对路径'
 
+```
+   config.properties文件：
+   
+   redisConfigPath=xxx          #redis-config.json文件绝对路径
+   p12FilePath=xxx              #.p12文件绝对路径（供IOS推送使用）
+   p12Password=xxx              #.p12密码（供IOS推送使用）
+   p12ISProduction=true/false   #.p12测试／正式通道（供IOS推送使用）
+   
+```
+
 ## Example
 
 ### Javascript
+
+```javascript
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+```
 
 ```javascript
 var socket = io.connect('http://xxx.xxx.xxx.xxx:xxxx');
