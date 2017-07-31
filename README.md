@@ -46,7 +46,7 @@ Web系统与手机APP之间的通讯，每个账户支持一台PC设备和一台
 
 * 编写配置文件 config.properties
 
-* 在导出的jar包目录下打开控制台
+* 打开控制台，cd到jar包目录下
 
 * 运行命令： java -jar socket.jar 'ip' 'port' 'config.properties 绝对路径'
 
