@@ -173,6 +173,7 @@ private String Message;
 | :---------- | :-----------|
 | netty-socketio   | https://github.com/mrniko/netty-socketio |
 | redisson   | https://github.com/redisson/redisson   |
+| java-apns  | https://github.com/notnoop/java-apns  |
 | gson   | https://github.com/google/gson   |
 | slf4j   | https://www.slf4j.org/   |
 
