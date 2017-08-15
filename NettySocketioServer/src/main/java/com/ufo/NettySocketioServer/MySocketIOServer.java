@@ -311,6 +311,7 @@ public class MySocketIOServer extends SocketIOServer {
 
     /**
      * 检查其它设备登录情况
+     *
      * @param userInfoBeans
      * @param deviceType
      * @param deviceToken
