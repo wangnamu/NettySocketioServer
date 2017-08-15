@@ -26,97 +26,6 @@ Web系统与手机APP之间的通讯，每个账户支持一台PC设备和一台
 6. `服务端踢掉与当前登录设备类型相同的已连接的其它设备`
 7. 被踢掉的客户端收到通知
 
-### 分布式
-
-本程序支持分布式，client与server通过redis的发布订阅进行通信，结构如下：
-
-| # | # | # |
-|:----------:|:-----------:|:-----------:|
-| client1 | client2 | client3 | 
-| >>>>>>>>>> |>>>>>redis<<<<<| <<<<<<<<<< |
-| socketioServer1 | socketioServer2 | socketioServer3 | 
-
-#### Nginx
-
-e.g. 两台服务器，分别为192.168.1.100、192.168.1.101，4个socketioServer，运行在不同的服务器上，端口号分别为3001、3002、3003、3004，对外ip为192.168.1.100、端口为3000
-
-nginx.conf 配置中加入
-
-```
-upstream socket_io_nodes {
-   server 192.168.1.100:3001;
-   server 192.168.1.100:3002;
-   server 192.168.1.101:3003;
-   server 192.168.1.101:3004;
-}
-
-server {
-   listen  3000;
-   server_name 192.168.1.100;
-   location / {
-         proxy_set_header Upgrade $http_upgrade;
-         proxy_set_header Connection "upgrade";
-         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-         proxy_set_header Host $host;
-         proxy_http_version 1.1;
-         proxy_pass http://socket_io_nodes;
-   }
-}
-```
-
-注意*：使用nginx构建负载均衡，client端io的transports要使用websocket
-
-```javascript
-var socket = io.connect('http://192.168.1.100:3000', {transports: ['websocket']});
-```
-
-如transports使用polling,nginx中的upstream应加入ip_hash
-```
-upstream socket_io_nodes {
-   ip_hash;
-   server 192.168.1.100:3001;
-   server 192.168.1.100:3002;
-   server 192.168.1.101:3003;
-   server 192.168.1.101:3004;
-}
-```
-
-#### Redis
-
-为了提升系统的可用性，Redis结构建议为主从模式+哨兵模式，详见[Redis]
-
-e.g. Redis1个master（192.168.1.100:6379），2个slave（192.168.1.100:6380、192.168.1.100:6381），1个sentinal（192.168.1.100:26379）
-
-redis-sentinal.conf主要配置（详见[Redis]）
-
-```
-port 26379
-dir "/private/tmp"
-protected-mode no
-
-sentinel monitor mymaster 192.168.1.100 6379 1
-sentinel down-after-milliseconds mymaster 5000
-sentinel parallel-syncs mymaster 1
-sentinel failover-timeout mymaster 15000
-```
-
-redis-config.json主要配置（详见[redisson]）
-
-```
-{
-    "sentinelServersConfig": {
-        ...
-        "sentinelAddresses": [
-            "redis://192.168.1.100:26379"
-        ],
-        "masterName": "mymaster",
-         ...
-    },
-    ...
-}
-```
-
-
 ## How To Use
 
 * 去[Redis]官网下载并安装Redis
@@ -247,6 +156,98 @@ private Boolean IsSuccess;
 //信息
 private String Message;
 ```
+
+
+### 分布式
+
+本程序支持分布式，client与server通过redis的发布订阅进行通信，结构如下：
+
+| # | # | # |
+|:----------:|:-----------:|:-----------:|
+| client1 | client2 | client3 | 
+| >>>>>>>>>> |>>>>>redis<<<<<| <<<<<<<<<< |
+| socketioServer1 | socketioServer2 | socketioServer3 | 
+
+#### Nginx
+
+e.g. 两台服务器，分别为192.168.1.100、192.168.1.101，4个socketioServer，运行在不同的服务器上，端口号分别为3001、3002、3003、3004，对外ip为192.168.1.100、端口为3000
+
+nginx.conf 配置中加入
+
+```
+upstream socket_io_nodes {
+   server 192.168.1.100:3001;
+   server 192.168.1.100:3002;
+   server 192.168.1.101:3003;
+   server 192.168.1.101:3004;
+}
+
+server {
+   listen  3000;
+   server_name 192.168.1.100;
+   location / {
+         proxy_set_header Upgrade $http_upgrade;
+         proxy_set_header Connection "upgrade";
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header Host $host;
+         proxy_http_version 1.1;
+         proxy_pass http://socket_io_nodes;
+   }
+}
+```
+
+注意*：使用nginx构建负载均衡，client端io的transports要使用websocket
+
+```javascript
+var socket = io.connect('http://192.168.1.100:3000', {transports: ['websocket']});
+```
+
+如transports使用polling,nginx中的upstream应加入ip_hash
+```
+upstream socket_io_nodes {
+   ip_hash;
+   server 192.168.1.100:3001;
+   server 192.168.1.100:3002;
+   server 192.168.1.101:3003;
+   server 192.168.1.101:3004;
+}
+```
+
+#### Redis
+
+为了提升系统的可用性，Redis结构建议为主从模式+哨兵模式，详见[Redis]
+
+e.g. Redis1个master（192.168.1.100:6379），2个slave（192.168.1.100:6380、192.168.1.100:6381），1个sentinal（192.168.1.100:26379）
+
+redis-sentinal.conf主要配置（详见[Redis]）
+
+```
+port 26379
+dir "/private/tmp"
+protected-mode no
+
+sentinel monitor mymaster 192.168.1.100 6379 1
+sentinel down-after-milliseconds mymaster 5000
+sentinel parallel-syncs mymaster 1
+sentinel failover-timeout mymaster 15000
+```
+
+redis-config.json主要配置（详见[redisson]）
+
+```
+{
+    "sentinelServersConfig": {
+        ...
+        "sentinelAddresses": [
+            "redis://192.168.1.100:26379"
+        ],
+        "masterName": "mymaster",
+         ...
+    },
+    ...
+}
+```
+
 
 ## Dependencies
 
